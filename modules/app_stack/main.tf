@@ -98,8 +98,8 @@ resource "aws_launch_template" "mi_lt" {
 # --- 5. AUTO SCALING GROUP ---
 resource "aws_autoscaling_group" "mi_asg" {
   name                = "asg-${lower(var.nombre_proyecto)}"
-  desired_capacity    = 2
-  max_size            = 3
+  desired_capacity    = 3
+  max_size            = 5
   min_size            = 2
   vpc_zone_identifier = data.aws_subnets.default.ids
   target_group_arns   = [aws_lb_target_group.mi_tg.arn]
@@ -115,6 +115,7 @@ resource "aws_autoscaling_group" "mi_asg" {
 }
 
 # --- 6. POLITICAS DE ESCALADO (CPU) ---
+# 6.1. REGLA POR CPU (Si el procesador sube del 50%, agrega máquinas)
 resource "aws_autoscaling_policy" "cpu_policy" {
   name                   = "escalar-por-cpu"
   autoscaling_group_name = aws_autoscaling_group.mi_asg.name
@@ -126,4 +127,19 @@ resource "aws_autoscaling_policy" "cpu_policy" {
     }
     target_value = 50.0 
   }
+}
+
+# 6.2. REGLA POR RED (Opcional - Si entra mucho tráfico > 1MB)
+resource "aws_autoscaling_policy" "network_policy" {
+  name                   = "escalar-por-red"
+  autoscaling_group_name = aws_autoscaling_group.mi_asg.name
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageNetworkIn"
+    }
+    target_value = 1000000.0 # Bytes
+  }
+
 }
