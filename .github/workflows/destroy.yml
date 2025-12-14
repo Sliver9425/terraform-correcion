@@ -7,6 +7,10 @@ jobs:
   terraform_destroy:
     name: Terraform Destroy
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout Code
@@ -14,6 +18,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
 
       - name: Terraform Init
         env:
@@ -27,15 +33,15 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.B2_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_APP_KEY }}
 
-          # Variables Lab 1 (Necesarias para saber qué borrar)
+          # Variables Lab 1 (Backend)
           TF_VAR_lab1_access_key: ${{ secrets.LAB1_ACCESS_KEY }}
           TF_VAR_lab1_secret_key: ${{ secrets.LAB1_SECRET_KEY }}
           TF_VAR_lab1_session_token: ${{ secrets.LAB1_SESSION_TOKEN }}
-          TF_VAR_lab1_ami_id: "ami-xxxxxx" # No importa si esta vieja, terraform la necesita para validar
+          TF_VAR_lab1_ami_id: ${{ secrets.LAB1_AMI_ID }}   # <--- ¡CORREGIDO!
 
-          # Variables Lab 2
+          # Variables Lab 2 (Frontend)
           TF_VAR_lab2_access_key: ${{ secrets.LAB2_ACCESS_KEY }}
           TF_VAR_lab2_secret_key: ${{ secrets.LAB2_SECRET_KEY }}
           TF_VAR_lab2_session_token: ${{ secrets.LAB2_SESSION_TOKEN }}
-          TF_VAR_lab2_ami_id: "ami-yyyyyy"
+          TF_VAR_lab2_ami_id: ${{ secrets.LAB2_AMI_ID }}   # <--- ¡CORREGIDO!
         run: terraform destroy -auto-approve
