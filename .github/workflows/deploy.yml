@@ -31,11 +31,11 @@ jobs:
           TF_VAR_lab1_access_key: ${{ secrets.LAB1_ACCESS_KEY }}
           TF_VAR_lab1_secret_key: ${{ secrets.LAB1_SECRET_KEY }}
           TF_VAR_lab1_session_token: ${{ secrets.LAB1_SESSION_TOKEN }}
-          TF_VAR_lab1_ami_id: "ami-PON_AQUI_LA_AMI_DEL_LAB1_SI_ES_FIJA"
+          TF_VAR_lab1_ami_id: ${{ secrets.LAB1_AMI_ID }}
 
           # Variables Lab 2
           TF_VAR_lab2_access_key: ${{ secrets.LAB2_ACCESS_KEY }}
           TF_VAR_lab2_secret_key: ${{ secrets.LAB2_SECRET_KEY }}
           TF_VAR_lab2_session_token: ${{ secrets.LAB2_SESSION_TOKEN }}
-          TF_VAR_lab2_ami_id: "ami-PON_AQUI_LA_AMI_DEL_LAB2_SI_ES_FIJA"
+          TF_VAR_lab2_ami_id: ${{ secrets.LAB2_AMI_ID }}
         run: terraform apply -auto-approve

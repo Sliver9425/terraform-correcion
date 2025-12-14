@@ -1,0 +1,41 @@
+name: Examen Destroy (ELIMINAR TODO)
+
+on:
+  workflow_dispatch: # Botón manual obligatorio
+
+jobs:
+  terraform_destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_APP_KEY }}
+        run: terraform init
+
+      - name: Terraform Destroy
+        env:
+          # Credenciales B2 (Para actualizar el estado a "vacío")
+          AWS_ACCESS_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.B2_APP_KEY }}
+
+          # Variables Lab 1 (Necesarias para saber qué borrar)
+          TF_VAR_lab1_access_key: ${{ secrets.LAB1_ACCESS_KEY }}
+          TF_VAR_lab1_secret_key: ${{ secrets.LAB1_SECRET_KEY }}
+          TF_VAR_lab1_session_token: ${{ secrets.LAB1_SESSION_TOKEN }}
+          TF_VAR_lab1_ami_id: "ami-xxxxxx" # No importa si esta vieja, terraform la necesita para validar
+
+          # Variables Lab 2
+          TF_VAR_lab2_access_key: ${{ secrets.LAB2_ACCESS_KEY }}
+          TF_VAR_lab2_secret_key: ${{ secrets.LAB2_SECRET_KEY }}
+          TF_VAR_lab2_session_token: ${{ secrets.LAB2_SESSION_TOKEN }}
+          TF_VAR_lab2_ami_id: "ami-yyyyyy"
+        run: terraform destroy -auto-approve
